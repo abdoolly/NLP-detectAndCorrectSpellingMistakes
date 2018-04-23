@@ -19,18 +19,18 @@ python runBeforeAnything.py
 ## Project file structure
 
 #### app
-This file inlcudes all the app logic
+This file includes all the app logic
 
 ### config
-This file include all configurations that we will use
+This file includes all configurations that we will use
 
 ### data
-This file will contain our datasets or any resources we are going to use
+This folder contains our datasets or any resources we are going to use
 
 ### models
-This is a package that will include our models that will help us query the database easily
+This is a package that includes our models that will help us query the database easily
 
 ### seeders
-This will include our database seeders
+This folder includes our database seeders
 
 
