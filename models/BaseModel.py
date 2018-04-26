@@ -19,6 +19,8 @@ class BaseModel:
     _fastAccessFillable: str = []
     uniqueKeys = []
 
+    _whereObject = {}
+
     def __init__(self):
         self.initConnection()
         self.uniqueKeys = self.setUniqueKeysArray()
@@ -124,20 +126,103 @@ class BaseModel:
         uniqueKey = self._getUniqueKeyInModelObject(modelObject)
 
         if uniqueKey:
-            return self.select({
+            return self.findOne({
                 uniqueKey: modelObject[uniqueKey]
             })
 
         return modelObject
 
+    def where(self, column: str, operator='=', value=None):
+        if not value:
+            raise Exception('Invalid value given')
+        # adding the new value in the whereObject
+        self._whereObject[column] = {'value': value, 'operator': operator}
+
+        return self
+
+    def get(self):
+        result = self.findAll(self._whereObject)
+        self._whereObject = {}
+        return result
+
+    def first(self):
+        result = self.findOne(self._whereObject)
+        self._whereObject = {}
+        return result
+
+    def _makeSelectQuery(self, modelObject: dict):
+        query = 'SELECT * from ' + \
+                self.tableName + \
+                ' WHERE '
+
+        selectorsString = ''
+        dictKeys = list(modelObject.keys())
+
+        for index in range(0, len(dictKeys)):
+
+            key = dictKeys[index]
+            modelObjectValue = modelObject[key]
+
+            if dictKeys[index] not in self._fastAccessFillable:
+                continue
+
+            suffix = ''
+
+            if index != (len(dictKeys) - 1):
+                suffix = ' AND '
+
+            if index == (len(dictKeys) - 1):
+                suffix = ''
+
+            if 'operator' in modelObject[key]:
+                selectorsString += key + ' ' + modelObjectValue['operator'] + ' ? ' + suffix
+                modelObject[key] = modelObjectValue['value']
+                continue
+
+            if 'operator' not in modelObject[key]:
+                selectorsString += key + ' = ' + ' ' + '? ' + suffix
+                continue
+
+        query += selectorsString
+
+        # converting the selection object to tuple for querying
+        myValueTuple = generalUtils.dicToTuple(modelObject)
+
+        # executing the query
+        self.executeQuery(query, myValueTuple)
+
     # not completed yet
-    def select(self, modelObject: dict, options: dict = None):
-        selectorsList = []
-        dictKeys = modelObject.keys()
+    def findOne(self, modelObject: dict, options: dict = None) -> dict:
+        # making the select query and execute it
+        self._makeSelectQuery(modelObject)
 
-        for item in dictKeys:
-            if item in self._fastAccessFillable:
-                selectorsList.append(item)
+        # getting the selection result values
+        values = self.cursor.fetchone()
 
+        # converting result from tuple to a proper dictionary
+        return self._valueToObject(self.cursor, values)
 
-        # return
+    def findAll(self, modelObject: dict, options: dict = None) -> list:
+        # making the select query and execute it
+        self._makeSelectQuery(modelObject)
+
+        # getting the selection result values
+        values = self.cursor.fetchall()
+
+        resultList = []
+        # for value in values:
+        for value in values:
+            # converting each value to an object
+            objectDict = self._valueToObject(self.cursor, value)
+
+            # appending in the list
+            resultList.append(objectDict)
+
+        # converting result from tuple to a proper dictionary
+        return resultList
+
+    def _valueToObject(self, cursor, data) -> dict:
+        Object = {}
+        for idx, col in enumerate(cursor.description):
+            Object[col[0]] = data[idx]
+        return Object

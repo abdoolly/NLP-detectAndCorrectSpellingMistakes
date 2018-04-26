@@ -2,7 +2,6 @@ from app.utils.FileManager import fileService
 from models.Word import Word
 from app.utils.generalUtils import generalUtils
 
-
 # those things underneath this line are just for testing but, in the future
 # this page will actually start our app
 
@@ -23,12 +22,12 @@ from app.utils.generalUtils import generalUtils
 #
 # res = Word.createIfNotExist(word)
 
-mylist = ['a', 'b', 'c']
-mydict = {
-    "a": 'asdasd',
-    'asasd': 'asdasdasd'
-}
 
-res = generalUtils.findKeyInDictionary(mylist, mydict)
+# base = Word.executeQuery('''select * from words where word=? ''', words)
+
+res = Word.findAll({
+    'word': 'exampleWord'
+})
+
 
 print(res)
