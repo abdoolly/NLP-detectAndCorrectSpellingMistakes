@@ -28,14 +28,15 @@ def createTableWords():
             CREATE TABLE IF NOT EXISTS words  
             (
                 id INTEGER PRIMARY KEY,
-                word VARCHAR(255),
+                word VARCHAR(255) ,
                 first_letter CHARACTER(1),
                 second_letter CHARACTER(1),
                 last_letter CHARACTER(1),
                 before_last_letter CHARACTER(1),
                 actual_length INTEGER,
                 min_length INTEGER,
-                max_length INTEGER
+                max_length INTEGER,
+                CONSTRAINT unique_word_constraint UNIQUE (word)
             )
+            
         ''')
-

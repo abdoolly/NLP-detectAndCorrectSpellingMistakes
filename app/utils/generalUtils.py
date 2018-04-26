@@ -1,3 +1,5 @@
+from typing import Union
+
 from funcy import compose
 
 
@@ -49,3 +51,11 @@ class generalUtils:
     @staticmethod
     def dicToTuple(dictionary):
         return tuple(dictionary.values())
+
+    @staticmethod
+    def findKeyInDictionary(array: list, modelObject: dict) -> Union[bool, str]:
+        for key in array:
+            if key in modelObject:
+                return key
+
+        return False

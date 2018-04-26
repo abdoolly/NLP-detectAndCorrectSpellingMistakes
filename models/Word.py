@@ -3,6 +3,7 @@ from models.BaseModel import BaseModel
 
 class Word(BaseModel):
     tableName = 'words'
+    uniqueKeys = ['word']
 
     fillables = [
         'word',
@@ -17,3 +18,6 @@ class Word(BaseModel):
 
     def __init__(self):
         BaseModel.__init__(self)
+
+
+Word = Word()

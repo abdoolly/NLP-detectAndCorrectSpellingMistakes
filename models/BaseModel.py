@@ -15,10 +15,14 @@ class BaseModel:
     cursor = None
 
     tableName = ''
-    fillables = []
+    fillables: str = []
+    _fastAccessFillable: str = []
+    uniqueKeys = []
 
     def __init__(self):
         self.initConnection()
+        self.uniqueKeys = self.setUniqueKeysArray()
+        self._fastAccessFillable = dict(zip(self.fillables, self.fillables))
 
     """
     initializing the connection variables in the class
@@ -27,6 +31,10 @@ class BaseModel:
     def initConnection(self):
         self.cursor = conn.cursor()
         self.connection = conn
+
+    def setUniqueKeysArray(self):
+        self.uniqueKeys.append('id')
+        return self.uniqueKeys
 
     """
     execute the query using composition between the doQuery and the commit function
@@ -74,12 +82,20 @@ class BaseModel:
             raise Exception('Please do not use BaseModel class to make any database operations')
 
     """
+    get the unique key if exist in the model by comparing both the unique keys array and the modelObject given
+    :return string | False
+    """
+
+    def _getUniqueKeyInModelObject(self, modelObject: dict) -> str:
+        return generalUtils.findKeyInDictionary(self.uniqueKeys, modelObject)
+
+    """
     function to create items in a table according to this model fillables 
     :param object is a dictionary 
     :return created object
     """
 
-    def create(self, object):
+    def create(self, modelObject):
         # make the query string
         query = 'INSERT INTO ' + \
                 self.tableName + \
@@ -88,14 +104,40 @@ class BaseModel:
                 generalUtils.makeBracketsOf('?', len(self.fillables))
 
         # executing the query
-        self.executeQuery(query, generalUtils.dicToTuple(object))
+        self.executeQuery(query, generalUtils.dicToTuple(modelObject))
 
         # adding the auto generated id of the create row
-        object['id'] = self.cursor.lastrowid
+        modelObject['id'] = self.cursor.lastrowid
 
         # then returning the row after creation
-        return object
+        return modelObject
 
-    def select(self, object):
-        self.isInstanceOfBaseModel()
-        return
+    def createIfNotExist(self, modelObject: dict):
+        query = 'INSERT OR IGNORE INTO ' + \
+                self.tableName + \
+                generalUtils.listToStringBrackets(self.fillables) + \
+                ' VALUES ' + \
+                generalUtils.makeBracketsOf('?', len(self.fillables))
+
+        self.executeQuery(query, generalUtils.dicToTuple(modelObject))
+
+        uniqueKey = self._getUniqueKeyInModelObject(modelObject)
+
+        if uniqueKey:
+            return self.select({
+                uniqueKey: modelObject[uniqueKey]
+            })
+
+        return modelObject
+
+    # not completed yet
+    def select(self, modelObject: dict, options: dict = None):
+        selectorsList = []
+        dictKeys = modelObject.keys()
+
+        for item in dictKeys:
+            if item in self._fastAccessFillable:
+                selectorsList.append(item)
+
+
+        # return
