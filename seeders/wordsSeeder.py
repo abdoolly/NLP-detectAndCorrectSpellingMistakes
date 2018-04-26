@@ -30,13 +30,32 @@ seeding the main words table
 
 def seedOurWordsCorpora():
     wordsList = fileService.getListFromFile('./data/words.txt')
+    creationList = []
     for word in wordsList:
-        Word.create({
-            "word": word,
-            "first_letter": word[0],
-            "second_letter": word[1],
-            "before_last_letter": word[len(word) - 2],
-            "actual_length": len(word),
-            "min_length": len(word) - 3,
-            "max_length": len(word) + 3
-        })
+
+        if len(word) > 3:
+            creationList.append({
+                "word": word,
+                "first_letter": word[0],
+                "second_letter": word[1],
+                'last_letter': word[len(word) - 1],
+                "before_last_letter": word[len(word) - 2],
+                "actual_length": len(word),
+                "min_length": (len(word) - 3),
+                "max_length": (len(word) + 3)
+            })
+
+        if len(word) <= 3:
+            creationList.append({
+                "word": word,
+                "first_letter": word[0],
+                "second_letter": None,
+                'last_letter': None,
+                "before_last_letter": None,
+                "actual_length": len(word),
+                "min_length": len(word),
+                "max_length": len(word)
+            })
+
+    Word.createBulk(creationList)
+    print('Word Seeder finished successfully')

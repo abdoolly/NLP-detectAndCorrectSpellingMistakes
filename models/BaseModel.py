@@ -42,12 +42,17 @@ class BaseModel:
     execute the query using composition between the doQuery and the commit function
     """
 
-    def executeQuery(self, query, data=None, debug=False):
-        if debug:
-            return compose(self._commitChanges, self._debug, self._doQuery)(query, data)
+    def executeQuery(self, query, data=None, debug=False, commit=True):
 
-        if not debug:
-            return compose(self._commitChanges, self._doQuery)(query, data)
+        basicCompose = compose(self._doQuery)
+
+        if debug:
+            basicCompose = compose(self._debug, basicCompose)
+
+        if commit:
+            basicCompose = compose(self.commitChanges, basicCompose)
+
+        return basicCompose(query, data)
 
     """
     function to execute a query
@@ -72,7 +77,7 @@ class BaseModel:
     commit changes in sqlite
     """
 
-    def _commitChanges(self, options):
+    def commitChanges(self, options):
         self.connection.commit()
 
     """
@@ -114,7 +119,7 @@ class BaseModel:
         # then returning the row after creation
         return modelObject
 
-    def createIfNotExist(self, modelObject: dict):
+    def createIfNotExist(self, modelObject: dict, options=None):
         query = 'INSERT OR IGNORE INTO ' + \
                 self.tableName + \
                 generalUtils.listToStringBrackets(self.fillables) + \
@@ -131,6 +136,18 @@ class BaseModel:
             })
 
         return modelObject
+
+    def createBulk(self, modelObjects: list, options=None):
+        for modelObject in modelObjects:
+            query = 'INSERT OR IGNORE INTO ' + \
+                    self.tableName + \
+                    generalUtils.listToStringBrackets(self.fillables) + \
+                    ' VALUES ' + \
+                    generalUtils.makeBracketsOf('?', len(self.fillables))
+
+            self.executeQuery(query, generalUtils.dicToTuple(modelObject), commit=False)
+
+        self.commitChanges(options)
 
     def where(self, column: str, operator='=', value=None):
         if not value:
