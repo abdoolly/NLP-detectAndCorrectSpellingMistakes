@@ -52,6 +52,10 @@ class generalUtils:
     def dicToTuple(dictionary):
         return tuple(dictionary.values())
 
+    """
+    search if any key in a list exist in a dictionary and return the first one it find 
+    """
+
     @staticmethod
     def findKeyInDictionary(array: list, modelObject: dict) -> Union[bool, str]:
         for key in array:
