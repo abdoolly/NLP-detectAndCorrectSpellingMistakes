@@ -1,3 +1,5 @@
+from typing import Union
+
 from config.connection import connection as conn
 from funcy import compose
 from app.utils.generalUtils import generalUtils
@@ -209,12 +211,15 @@ class BaseModel:
         self.executeQuery(query, myValueTuple)
 
     # not completed yet
-    def findOne(self, modelObject: dict, options: dict = None) -> dict:
+    def findOne(self, modelObject: dict, options: dict = None) -> Union[dict, None]:
         # making the select query and execute it
         self._makeSelectQuery(modelObject)
 
         # getting the selection result values
         values = self.cursor.fetchone()
+
+        if not values:
+            return None
 
         # converting result from tuple to a proper dictionary
         return self._valueToObject(self.cursor, values)

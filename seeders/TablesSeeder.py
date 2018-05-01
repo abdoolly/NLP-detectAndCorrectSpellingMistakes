@@ -40,3 +40,14 @@ def createTableWords():
             )
             
         ''')
+
+    # making the full text search table
+    baseModel.executeQuery(
+        '''
+           CREATE VIRTUAL TABLE IF NOT EXISTS vwords
+           USING FTS5(
+             word,
+             reverse
+           );
+        '''
+    )

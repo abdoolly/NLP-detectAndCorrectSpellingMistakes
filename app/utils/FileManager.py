@@ -22,5 +22,18 @@ class FileManager:
 
         return fileList
 
+    """
+    get all text in a file
+    """
+
+    def getFileData(self, path: str, mode='r'):
+        file = open(path, mode)
+        return file.read()
+
+    def putDataInFile(self, path, text: str, mode='w'):
+        file = open(path, 'w')
+        file.write(text)
+        return path
+
 
 fileService = FileManager()

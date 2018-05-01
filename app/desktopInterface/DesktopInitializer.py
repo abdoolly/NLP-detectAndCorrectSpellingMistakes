@@ -2,6 +2,7 @@ import tkinter as Tkinter
 from tkinter.filedialog import askopenfilename
 
 from funcy import compose
+from app.core.spellcheckers.fullTextSearchSpellChecker import fullTextSearchSpellChecker
 
 
 class DesktopInitializer:
@@ -14,7 +15,7 @@ class DesktopInitializer:
         self.makeMenuBar(self.root)
         self.root.mainloop()
 
-    # This is where we lauch the file manager bar.
+    # This is where we launch the file manager
     def OpenFile(self):
         name = askopenfilename(
             filetypes=(("Text File", "*.txt"), ("All Files", "*.*")),
@@ -24,9 +25,10 @@ class DesktopInitializer:
         # Using try in case user types in unknown file or closes without choosing a file.
         try:
             with open(name, 'r') as UseFile:
+                self.setTextData('Processing text...')
                 self.sendToSpellCheck(UseFile.read())
-        except:
-            print("No file exists")
+        except ValueError as err:
+            print(err)
 
     # initialize main desktop items
     def initializeDesktop(self, tk: Tkinter):
@@ -110,6 +112,10 @@ class DesktopInitializer:
 
     # send the text to get spell checked and viewed in the text area after it was processed
     def sendToSpellCheck(self, text):
+        # making something like a loader which will man the text is being processed
         self.setTextData('Processing text...')
-        print(text)
-        self.setTextData(text)
+
+        correctedText = fullTextSearchSpellChecker.spellCheckDocument(text)
+
+        # setting the newly corrected text
+        self.setTextData(correctedText)

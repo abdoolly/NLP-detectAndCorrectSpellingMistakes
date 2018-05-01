@@ -1,0 +1,29 @@
+Junior Mean Stack Developer Wanted:
+
+We are payme comany we make financial systems .Anything that would relate to that field is our speciality .
+We are excited to announce that we want to hire a mean stack developer to join our team for making a huge impact in the financial world in Egypt.
+We always make new things and try to find novel ideas for solving our problems come join us now.
+we need you to be younger than 25 years old and 
+We need you to have the following knowldge
+
+technical skills:
+
+- Minimum 6 months of experience
+- Good database design skills
+- Good knowledge of node js 
+- Good knowledge in angular js 4 
+- Good knowledge of design patterns
+- Excellent programming skills and a good programmer mindset
+- Stubborn problem solver
+
+
+soft skills:
+
+- Always make your work with great quality.
+- Good team work skills 
+- In constant self development
+
+Bous:
+- Experience with sails framework
+
+If yu have the above skills and want to make a change come join us and send me your cv on abdallah@paymeapp.co with subject "Code65-Junior Mean Stack Developer"

@@ -1,4 +1,5 @@
 from app.utils.FileManager import fileService
+from models.VWord import VWord
 
 from models.Word import Word
 
@@ -31,15 +32,21 @@ seeding the main words table
 def seedOurWordsCorpora():
     wordsList = fileService.getListFromFile('./data/words.txt')
     creationList = []
+    smallList = []
     for word in wordsList:
+
+        smallList.append({
+            "word": str(word),
+            'reverse': word[::-1]
+        })
 
         if len(word) > 3:
             creationList.append({
-                "word": word,
-                "first_letter": word[0],
-                "second_letter": word[1],
-                'last_letter': word[len(word) - 1],
-                "before_last_letter": word[len(word) - 2],
+                "word": str(word).lower(),
+                "first_letter": str(word[0]).lower(),
+                "second_letter": str(word[1]).lower(),
+                'last_letter': str(word[len(word) - 1]).lower(),
+                "before_last_letter": str(word[len(word) - 2]).lower(),
                 "actual_length": len(word),
                 "min_length": (len(word) - 3),
                 "max_length": (len(word) + 3)
@@ -47,8 +54,8 @@ def seedOurWordsCorpora():
 
         if len(word) <= 3:
             creationList.append({
-                "word": word,
-                "first_letter": word[0],
+                "word": str(word).lower(),
+                "first_letter": str(word[0]).lower(),
                 "second_letter": None,
                 'last_letter': None,
                 "before_last_letter": None,
@@ -58,4 +65,8 @@ def seedOurWordsCorpora():
             })
 
     Word.createBulk(creationList)
+    VWord.createBulk(smallList)
+
+    VWord.executeQuery('INSERT INTO vwords(vwords) VALUES(?)', ('optimize',))
+
     print('Word Seeder finished successfully')

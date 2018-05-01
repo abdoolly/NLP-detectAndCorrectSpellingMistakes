@@ -1,6 +1,7 @@
 from typing import Union
 
 from funcy import compose
+import re
 
 
 class generalUtils:
@@ -63,3 +64,13 @@ class generalUtils:
                 return key
 
         return False
+
+    @staticmethod
+    def symbolsRemover(word: str):
+        return re.sub('[^A-Za-z0-9]+', '', word)
+
+    @classmethod
+    def cleanWord(cls, word: str):
+        word = word.strip()
+        word = cls.symbolsRemover(word)
+        return word
