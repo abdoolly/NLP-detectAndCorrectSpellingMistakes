@@ -43,7 +43,7 @@ class Matcher:
                 minimumDistance['index'] = index
                 minimumDistance['distance'] = distance
 
-        if minimumDistance['distance'] > 10:
+        if minimumDistance['distance'] > 7:
             return word
 
         return wordsList[minimumDistance['index']][wordIndex]

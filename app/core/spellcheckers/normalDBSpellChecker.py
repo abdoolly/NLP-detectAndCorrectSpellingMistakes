@@ -52,9 +52,20 @@ class normalDBSpellChecker:
 
     def textToList(self, text: str):
         textList = text.split(' ')
-        return textList
-        # for index, word in enumerate(textList):
 
+        for index, word in enumerate(textList):
+            splitted = word.split('\n')
+            if len(splitted) > 1:
+                textList[index] = splitted[0]
+
+                counter = 1
+
+                # putting the splitted word inside the array
+                for index_2, splW in enumerate(splitted):
+                    if splW and index_2:
+                        textList.insert(index + counter, splW)
+                        counter = counter + 1
+        return textList
 
     def correctWord(self, word):
         return compose(self.getCorrectWord, self.selectWordMatchers)(word)

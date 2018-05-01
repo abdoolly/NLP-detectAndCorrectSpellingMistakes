@@ -33,8 +33,7 @@ def seedOurWordsCorpora():
     wordsList = fileService.getListFromFile('./data/words.txt')
     creationList = []
     smallList = []
-    for word in wordsList:
-
+    for index, word in enumerate(wordsList):
         smallList.append({
             "word": str(word),
             'reverse': word[::-1]

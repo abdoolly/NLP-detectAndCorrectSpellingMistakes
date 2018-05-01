@@ -1,13 +1,7 @@
 from app.core.spellcheckers.fullTextSearchSpellChecker import fullTextSearchSpellChecker
-from app.core.spellcheckers.normalDBSpellChecker import normalDBSpellChecker
 from app.desktopInterface.DesktopInitializer import DesktopInitializer
 from app.utils.FileManager import fileService
-from models.VWord import VWord
-from models.Word import Word
-from app.utils.generalUtils import generalUtils
-import re
 
-# from funcy import map
 
 # choose the way you want to treat the application
 

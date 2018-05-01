@@ -37,17 +37,15 @@ class fullTextSearchSpellChecker(normalDBSpellChecker):
         if len(word) > 3:
             firstTwo = word[:2] + '*'
             lastThree = word[(len(word) - 3):] + '*'
-            print(word)
             VWord.executeQuery('select * from vwords where vwords MATCH ?', (firstTwo,))
 
         if len(word) <= 3:
             VWord.executeQuery(
                 '''
-                   select * from words where word = ? and actual_length = ? 
+                   select * from words where first_letter = ? and actual_length between 2 and 4 
                 ''',
-                (word[0], len(word))
+                (word[0])
             )
 
         result = VWord.cursor.fetchall()
-        print(result)
         return word, result
